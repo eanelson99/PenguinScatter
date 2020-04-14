@@ -1,12 +1,8 @@
 //title of scatterplot
 var setTitle = function(msg)
     {
-        d3.select("body")
-        .selectAll("#original")
-        .data(["Grade on Final vs Average HW Grade"])
-        .enter()
-        .append("original")
-        .text (function(d){return d })
+        d3.select("body h2")
+        .text (msg)
     }
 
 //grade on final
@@ -70,7 +66,7 @@ var getGrade = function(penguin)
     }
 
 var sortByProperty = function(property)
-    {
+    { console.log("sort")
         var outcome = function(a,b)
         {
             if(a[property] == b[property])
@@ -121,28 +117,16 @@ var drawToolTip = function(penguin)
 
 
 
-var classDataPromise = d3.json("classData.json")
-classDataPromise.then(function(penguins)
-                     {
-                        console.log("worked",penguins);
-                        setTitle("Grade on Final vs Average HW Grade");
-                        penguins.sort(sortByProperty("experiment"));
-                        displayFinalvsHW(penguins);
-                        initButtons(penguins);
-                        console.log('Worked: initialized buttons')
-                        
-                     });
-                     (function(err){console.log("failed", err)})
 
 var displayFinalvsHW = function(penguins)
-{
+{ console.log("displaying")
     var width = 750;
     var height = 400;
     
     var svg = d3.select("#scatterplot")
         .attr("width", width)
         .attr("height", height)
-        .attr("id","graph")
+        
     
     var xScale = d3.scaleLinear()
         .domain([d3.min(penguins,getPenguinFinal), d3.max(penguins,getPenguinFinal)])
@@ -208,7 +192,7 @@ var displayHWvsQuiz = function(penguins)
     var svg = d3.select("#scatterplot")
         .attr("width", width)
         .attr("height", height)
-        .attr("id","graph")
+        
     
     var xScale = d3.scaleLinear()
         .domain([d3.min(penguins,getPenguinHW, d3.max(penguins,getPenguinHW))])
@@ -275,7 +259,7 @@ var displayTestvsFinal = function(penguins)
     var svg = d3.select("#scatterplot")
         .attr("width", width)
         .attr("height", height)
-        .attr("id","graph")
+       
     
     var xScale = d3.scaleLinear()
         .domain([d3.min(penguins,getPenguinTest, d3.max(penguins,getPenguinTest))])
@@ -342,7 +326,7 @@ var displayTestvsQuiz = function(penguins)
     var svg = d3.select("#scatterplot")
         .attr("width", width)
         .attr("height", height)
-        .attr("id","graph")
+        
     
     var xScale = d3.scaleLinear()
         .domain([d3.min(penguins,getPenguinTest, d3.max(penguins,getPenguinTest))])
@@ -400,16 +384,16 @@ svg.append("line")
         
 }
 
-
-//clear table
 var clearTable = function()
     {
-        d3.selectAll("#scatterplot line")
-            .remove();
+        console.log("clearingtable")
         d3.selectAll("#scatterplot circle")
+            .remove();
+        d3.selectAll("#scatterplot line")
             .remove();
         d3.selectAll("#tooltip div")
             .remove();
+        
     }
 
 
@@ -420,39 +404,54 @@ var initButtons = function(penguins)
         .on("clicked", function()
           { 
             clearTable()
-            displayFinalvsHW(penguins)
+            console.log ("clearedtable")
             setTitle("Final vs HW Mean");
 
             penguins.sort(sortByProperty("experiment"));
-           
+            console.log("finish sort")
+           displayFinalvsHW(penguins)
+            console.log("display table")
         });
     d3.select("#HWvsQuiz")
         .on("clicked", function()
           {
             clearTable()
-            displayHWvsQuiz(penguins)
+           
             setTitle("HW Mean vs Quiz Mean");
 
             penguins.sort(sortByProperty("experiment"));
-            
+             displayHWvsQuiz(penguins)
         });
     d3.select("#TestvsFinal")
         .on("clicked", function()
           {
             clearTable()
-            displayTestvsFinal(penguins)
+            
             setTitle("Test Mean vs Final Mean")
             penguins.sort(sortByProperty("experiment"));
-            
+            displayTestvsFinal(penguins)
         });
     d3.select("#TestvsQuiz")
         .on("clicked", function()
           {
             clearTable()
-            displayTestvsQuiz(penguins)
+            
             setTitle("Test Mean vs Quiz Mean");
 
             penguins.sort(sortByProperty("experiment"));
-            
+             displayTestvsQuiz(penguins)
         });
 }
+
+var classDataPromise = d3.json("classData.json")
+classDataPromise.then(function(penguins)
+                     {
+                        console.log("worked",penguins);
+                        setTitle("Final vs HW Mean");
+                        penguins.sort(sortByProperty("experiment"));
+                        displayFinalvsHW(penguins);
+                        initButtons(penguins);
+                        console.log('Worked: initialized buttons')
+                        
+                     });
+                     (function(err){console.log("failed", err)})
